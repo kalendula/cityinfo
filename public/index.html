@@ -1,0 +1,58 @@
+<!Doctype <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Cities info</title>
+</head>
+<body>
+   <p> Country:</p><br>
+    <select id="countrySelect" onChange="javascript:onCountrySelect();"><br>
+        <option>downloading...</option>
+    </select>
+    <script>
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'http://localhost:3000/countries', true);
+    xhr.send();
+    xhr.onreadystatechange = function() {
+      if (this.readyState != 4) return;
+      document.getElementById("countrySelect").innerHTML="";
+      var countries = JSON.parse(this.responseText);
+      for (let i =0;i<countries.length;i++)
+      document.getElementById("countrySelect").innerHTML+="<option value=\""+countries[i]+"\">"+countries[i]+"</option>";  
+    }
+    </script>
+   <br><p>City:</p><br>
+    <select id="citySelect" onChange="javascript:onCitySelect();">
+            <option>waiting for country choice...</option>
+    </select><br>
+    <p>Info: </p><br>
+    <div id="info">
+        no info now.
+    </div>
+    <script>
+        function onCountrySelect(){
+        document.getElementById("citySelect").innerHTML="downloading...";
+        xhr.open('GET', 'http://localhost:3000/cities/'+document.getElementById("countrySelect").value, true);
+        xhr.send();
+        xhr.onreadystatechange = function() {
+            if (this.readyState != 4) return;
+            document.getElementById("citySelect").innerHTML="";
+            var cities = JSON.parse(this.responseText);
+            for (let i =0;i<cities.length;i++)
+            document.getElementById("citySelect").innerHTML+="<option value=\""+cities[i]+"\">"+cities[i]+"</option>";  
+            }
+        }
+
+        function onCitySelect(){
+        document.getElementById("info").innerHTML="downloading...";
+        xhr.open('GET', 'http://localhost:3000/info/'+document.getElementById("citySelect").value, true);
+        xhr.send();
+        xhr.onreadystatechange = function() {
+            if (this.readyState != 4) return;
+            document.getElementById("info").innerHTML=this.responseText;  
+            }
+        }
+    </script>
+</body>
+</html>
